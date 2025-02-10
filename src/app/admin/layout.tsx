@@ -3,6 +3,7 @@ import { Header } from "@/components/header";
 import { RenderMounted } from "@/components/render-mounted";
 import { ADMIN } from "@/constants/constants";
 import { createClient } from "@/supabase/server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -11,6 +12,13 @@ export default async function AdminLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const userToken = cookieStore.get("user_token");
+
+  if (!userToken) {
+    return redirect("/auth");
+  }
+
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 

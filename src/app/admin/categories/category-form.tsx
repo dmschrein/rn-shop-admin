@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,11 @@ export const CategoryForm = ({
   defaultValues: CreateCategorySchema | null;
 }) => {
   const isSubmitting = form.formState.isSubmitting;
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (defaultValues) {
@@ -33,6 +38,10 @@ export const CategoryForm = ({
       form.reset({ name: "", image: undefined });
     }
   }, [defaultValues, form]);
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <Form {...form}>

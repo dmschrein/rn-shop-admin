@@ -12,8 +12,8 @@ import { revalidatePath } from 'next/cache';
 
 export const getCategoriesWithProducts =
   async (): Promise<CategoriesWithProductsResponse> => {
-    const supabase = createClient();
-    const { data, error } = await (await supabase)
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('category')
       .select('* , products:product(*)')
       .returns<CategoriesWithProductsResponse>();
@@ -24,12 +24,12 @@ export const getCategoriesWithProducts =
   };
 
 export const imageUploadHandler = async (formData: FormData) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   if (!formData) return;
 
   const fileEntry = formData.get('file');
 
-  if (!(fileEntry instanceof File)) throw new Error('Expected a file');
+  if (!(fileEntry instanceof Blob)) throw new Error('Expected a file');
 
   const fileName = fileEntry.name;
 
@@ -48,7 +48,7 @@ export const imageUploadHandler = async (formData: FormData) => {
 
     const {
       data: { publicUrl },
-    } = await supabase.storage.from('app-images').getPublicUrl(data.path);
+    } = await  supabase.storage.from('app-images').getPublicUrl(data.path);
 
     return publicUrl;
   } catch (error) {
@@ -61,7 +61,7 @@ export const createCategory = async ({
   imageUrl,
   name,
 }: CreateCategorySchemaServer) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const slug = slugify(name, { lower: true });
 
   const { data, error } = await supabase.from('category').insert({
@@ -82,7 +82,7 @@ export const updateCategory = async ({
   name,
   slug,
 }: UpdateCategorySchema) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('category')
     .update({ name, imageUrl })
@@ -96,7 +96,7 @@ export const updateCategory = async ({
 };
 
 export const deleteCategory = async (id: number) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.from('category').delete().match({ id });
 
   if (error) throw new Error(`Error deleting category: ${error.message}`);
@@ -105,7 +105,7 @@ export const deleteCategory = async (id: number) => {
 };
 
 export const getCategoryData = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('category')
     .select('name, products:product(id)');

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
+import SetSession from "@/components/set-session";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,9 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SetSession />
           <main>{children}</main>
           <Toaster richColors />
         </ThemeProvider>

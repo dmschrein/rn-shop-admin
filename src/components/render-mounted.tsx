@@ -7,7 +7,7 @@ export const RenderMounted = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return null;
+  if (!mounted) return <div style={{ visibility: "hidden" }}>{children}</div>;
 
   return <>{children}</>;
 };
